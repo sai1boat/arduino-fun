@@ -42,11 +42,23 @@ int currentPatch = 0;
 int buttonNumber = 0;
 char buf[16];
 
+enum buttons{
+  DOWN,
+  UP
+};
+
 /* 
  * buttonNumber is 1 (left) or 2 (right)
  */
-void handle_bank_change_button_event(){
-  bankNumber = (bankNumber+1) % 7;
+void handle_bank_change_button_event(buttons b){
+  switch(b) {
+    case UP:
+      bankNumber = (bankNumber+1) % 7;
+      break;
+    case DOWN:
+      bankNumber = (bankNumber-1) % 7;
+      break;
+  }
 }
 
 void handle_button_event(int button){
@@ -112,7 +124,7 @@ void loop() {
     draw();
   } while( u8g.nextPage() );
 
-
+  int dn = digitalRead(PIN_7);
   int up = digitalRead(PIN_8);
   int b0 = digitalRead(PIN_9);
   int b1 = digitalRead(PIN_10);
@@ -121,17 +133,20 @@ void loop() {
   int b4 = digitalRead(PIN_13);
 
   if (up == HIGH){
-    handle_bank_change_button_event();
+    handle_bank_change_button_event(UP);
   }
-  else if(b1 == HIGH)
+  else if(dn == HIGH){
+    handle_bank_change_button_event(DOWN);
+  }
+  else if (b0 == HIGH)
     handle_button_event(0);
-  else if (b2 == HIGH)
+  else if (b1 == HIGH)
     handle_button_event(1);
-  else if(b3 == HIGH)
+  else if(b2 == HIGH)
     handle_button_event(2);
-  else if (b4 == HIGH)
+  else if (b3 == HIGH)
     handle_button_event(3);
-  else if(b5 == HIGH)
+  else if (b4 == HIGH)
     handle_button_event(4);
 }
 
